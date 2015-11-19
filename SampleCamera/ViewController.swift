@@ -12,30 +12,70 @@ import AVFoundation
 class ViewController: UIViewController {
     
     //カメラセッション
-    let captureSession = AVCaptureSession()
+    var captureSession: AVCaptureSession!
     //デバイス
     var cameraDevices = AVCaptureDevice()
     //画像のアウトプット
-    let imageOutput = AVCaptureStillImageOutput()
+    var imageOutput: AVCaptureStillImageOutput!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        //セッションの作成
+        captureSession = AVCaptureSession()
         
+        //デバイス一覧の取得
         let devices = AVCaptureDevice.devices()
         
+        //バックカメラをcameraDevicesに格納
         for device in devices {
             if device.position == AVCaptureDevicePosition.Back {
                 cameraDevices = device as! AVCaptureDevice
             }
         }
         
-        let videoInput = AVCaptureDeviceInput.dev
+        //バックカメラからVideoInputを取得
+        let videoInput: AVCaptureInput!
+        do {
+            videoInput = try AVCaptureDeviceInput.init(device: cameraDevices)
+        } catch {
+            videoInput = nil
+        }
+        
+        //セッションに追加
+        captureSession.addInput(videoInput)
+        
+        //出力先を生成
+        imageOutput = AVCaptureStillImageOutput()
+        
+        //セッションに追加
+        captureSession.addOutput(imageOutput)
+        
+        //画像を表示するレイヤーを生成
+        let captureVideoLayer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer.init(session: captureSession)
+        captureVideoLayer.frame = self.view.bounds
+        captureVideoLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        
+        //Viewに追加
+        self.view.layer.addSublayer(captureVideoLayer)
+        
+        //セッション開始
+        captureSession.startRunning()
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    @IBAction func cameraStart(sender: AnyObject) {
+        //ビデオ出力に接続
+        let captureVideoConnection = imageOutput.connectionWithMediaType(AVMediaTypeVideo)
+        
+        self.imageOutput.captureStillImageAsynchronouslyFromConnection(captureVideoConnection) { (imageDataBuffer, error) -> Void in
+            <#code#>
+        }
     }
 
 

@@ -22,6 +22,9 @@
                                 <animations/>
                                 <color key="backgroundColor" red="1" green="0.35755061470830241" blue="0.24445075558750362" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="カメラ起動"/>
+                                <connections>
+                                    <action selector="cameraStart:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kYq-zZ-Sea"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5XM-MN-Ayt">
                                 <rect key="frame" x="250" y="398" width="117" height="73"/>
