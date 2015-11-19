@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     //カメラセッション
     var captureSession: AVCaptureSession!
     //デバイス
-    var cameraDevices = AVCaptureDevice()
+    var cameraDevices: AVCaptureDevice!
     //画像のアウトプット
     var imageOutput: AVCaptureStillImageOutput!
 
@@ -73,8 +73,14 @@ class ViewController: UIViewController {
         //ビデオ出力に接続
         let captureVideoConnection = imageOutput.connectionWithMediaType(AVMediaTypeVideo)
         
+        //接続から画像を取得
         self.imageOutput.captureStillImageAsynchronouslyFromConnection(captureVideoConnection) { (imageDataBuffer, error) -> Void in
-            <#code#>
+            //取得したImageのDataBufferをJPEGを変換
+            let capturedImageData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataBuffer)
+            //JPEGからUIImageを作成
+            let Image: UIImage = UIImage(data: capturedImageData)!
+            //アルバムに追加
+            UIImageWriteToSavedPhotosAlbum(Image, self, nil, nil)
         }
     }
 
