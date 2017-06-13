@@ -28,8 +28,8 @@ class ViewController: UIViewController {
         let devices = AVCaptureDevice.devices()
         
         //バックカメラをcameraDevicesに格納
-        for device in devices {
-            if device.position == AVCaptureDevicePosition.Back {
+        for device in devices! {
+            if (device as AnyObject).position == AVCaptureDevicePosition.back {
                 cameraDevices = device as! AVCaptureDevice
             }
         }
@@ -69,14 +69,14 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func cameraStart(sender: AnyObject) {
+    @IBAction func cameraStart(_ sender: AnyObject) {
         //ビデオ出力に接続
-        let captureVideoConnection = imageOutput.connectionWithMediaType(AVMediaTypeVideo)
+        let captureVideoConnection = imageOutput.connection(withMediaType: AVMediaTypeVideo)
         
         //接続から画像を取得
-        self.imageOutput.captureStillImageAsynchronouslyFromConnection(captureVideoConnection) { (imageDataBuffer, error) -> Void in
+        self.imageOutput.captureStillImageAsynchronously(from: captureVideoConnection) { (imageDataBuffer, error) -> Void in
             //取得したImageのDataBufferをJPEGを変換
-            let capturedImageData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataBuffer)
+            let capturedImageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataBuffer)
             //JPEGからUIImageを作成
             let Image: UIImage = UIImage(data: capturedImageData)!
             //アルバムに追加
