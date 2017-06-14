@@ -193,6 +193,7 @@
 				TargetAttributes = {
 					39F691FF1BF8D92300048A5C = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = SLHYE76MHB;
 						LastSwiftMigration = 0830;
 					};
 					39F692131BF8D92300048A5C = {
@@ -405,9 +406,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SLHYE76MHB;
 				INFOPLIST_FILE = SampleCamera/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.litech.SampleCamera;
+				PRODUCT_BUNDLE_IDENTIFIER = tv.shinoki.SampleCamera;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -417,9 +420,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SLHYE76MHB;
 				INFOPLIST_FILE = SampleCamera/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.litech.SampleCamera;
+				PRODUCT_BUNDLE_IDENTIFIER = tv.shinoki.SampleCamera;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

@@ -9,81 +9,80 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController {
-    
-    //カメラセッション
-    var captureSession: AVCaptureSession!
-    //デバイス
-    var cameraDevices: AVCaptureDevice!
+class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
+
+    //カメラセッションの作成
+    let captureSession: AVCaptureSession = AVCaptureSession()
     //画像のアウトプット
-    var imageOutput: AVCaptureStillImageOutput!
+    //出力先を生成
+    var imageOutput: AVCapturePhotoOutput = AVCapturePhotoOutput()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        //セッションの作成
-        captureSession = AVCaptureSession()
-        
         //デバイス一覧の取得
-        let devices = AVCaptureDevice.devices()
-        
-        //バックカメラをcameraDevicesに格納
-        for device in devices! {
-            if (device as AnyObject).position == AVCaptureDevicePosition.back {
-                cameraDevices = device as! AVCaptureDevice
-            }
-        }
-        
+        let devices = AVCaptureDeviceDiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: nil, position: .back).devices
         //バックカメラからVideoInputを取得
-        let videoInput: AVCaptureInput!
-        do {
-            videoInput = try AVCaptureDeviceInput.init(device: cameraDevices)
-        } catch {
-            videoInput = nil
-        }
-        
+        let videoInput = try? AVCaptureDeviceInput(device: devices?.first)
+
+
         //セッションに追加
         captureSession.addInput(videoInput)
-        
-        //出力先を生成
-        imageOutput = AVCaptureStillImageOutput()
-        
+
         //セッションに追加
         captureSession.addOutput(imageOutput)
-        
+
         //画像を表示するレイヤーを生成
-        let captureVideoLayer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer.init(session: captureSession)
+        let captureVideoLayer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         captureVideoLayer.frame = self.view.bounds
         captureVideoLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        
+
         //Viewに追加
-        self.view.layer.addSublayer(captureVideoLayer)
+        self.view.layer.insertSublayer(captureVideoLayer, at: 0)
         
+
         //セッション開始
         captureSession.startRunning()
-        
+
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @IBAction func cameraStart(_ sender: UIButton) {
+
+        let setting = AVCapturePhotoSettings()
+        setting.flashMode = .auto
+        setting.isAutoStillImageStabilizationEnabled = true
+        setting.isHighResolutionPhotoEnabled = false
+        imageOutput.capturePhoto(with: setting, delegate: self)
+        captureSession.stopRunning()
     }
-    
-    @IBAction func cameraStart(_ sender: AnyObject) {
-        //ビデオ出力に接続
-        let captureVideoConnection = imageOutput.connection(withMediaType: AVMediaTypeVideo)
-        
-        //接続から画像を取得
-        self.imageOutput.captureStillImageAsynchronously(from: captureVideoConnection) { (imageDataBuffer, error) -> Void in
-            //取得したImageのDataBufferをJPEGを変換
-            let capturedImageData: Data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataBuffer)
-            //JPEGからUIImageを作成
-            let Image: UIImage = UIImage(data: capturedImageData)!
-            //アルバムに追加
-            UIImageWriteToSavedPhotosAlbum(Image, self, nil, nil)
+
+    func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
+
+        if let error = error {
+
+            print("ERROR: capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?)...\(error.localizedDescription)")
+        }
+        else {
+
+            guard
+                let photoSampleBuffer = photoSampleBuffer,
+                let photoData = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: photoSampleBuffer, previewPhotoSampleBuffer: previewPhotoSampleBuffer),
+                let image = UIImage(data: photoData) else { return }
+
+            UIImageWriteToSavedPhotosAlbum(image, self, #selector(imageWriteToSavedPhotosAlbum(_:didFinishSavingWithError:contextInfo:)), nil)
         }
     }
 
+    private dynamic func imageWriteToSavedPhotosAlbum(_ image: UIImage!, didFinishSavingWithError error: Error?,  contextInfo: Any?) {
 
+        if let error = error {
+
+            print("ERROR: imageWriteToSavedPhotosAlbum(_:didFinishSavingWithError:contextInfo) ... \(error)")
+        }
+        else {
+
+
+        }
+    }
+    
 }
 
